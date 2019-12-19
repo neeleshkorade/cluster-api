@@ -155,6 +155,10 @@ func (dst *MachineDeploymentList) ConvertFrom(srcRaw conversion.Hub) error {
 }
 
 func Convert_v1alpha2_MachineSpec_To_v1alpha3_MachineSpec(in *MachineSpec, out *v1alpha3.MachineSpec, s apiconversion.Scope) error {
+	if out.Bootstrap.ConfigRef.Kind == "KubeadmConfig" || out.Bootstrap.ConfigRef.Kind == "KubeadmConfigTemplate" {
+		out.Bootstrap.ConfigRef.APIVersion = "v1alpha3"
+	}
+
 	if err := autoConvert_v1alpha2_MachineSpec_To_v1alpha3_MachineSpec(in, out, s); err != nil {
 		return err
 	}
@@ -162,6 +166,14 @@ func Convert_v1alpha2_MachineSpec_To_v1alpha3_MachineSpec(in *MachineSpec, out *
 	// Discards unused ObjectMeta
 
 	return nil
+}
+
+func Convert_v1alpha2_MachineDeploymentSpec_To_v1alpha3_MachineDeploymentSpec(in *MachineDeploymentSpec, out *v1alpha3.MachineDeploymentSpec, s apiconversion.Scope) error {
+	if out.Template.Spec.Bootstrap.ConfigRef.Kind == "KubeadmConfig" || out.Template.Spec.Bootstrap.ConfigRef.Kind == "KubeadmConfigTemplate" {
+		out.Template.Spec.Bootstrap.ConfigRef.APIVersion = "v1alpha3"
+	}
+
+	return autoConvert_v1alpha2_MachineDeploymentSpec_To_v1alpha3_MachineDeploymentSpec(in, out, s)
 }
 
 func Convert_v1alpha2_ClusterSpec_To_v1alpha3_ClusterSpec(in *ClusterSpec, out *v1alpha3.ClusterSpec, s apiconversion.Scope) error {
